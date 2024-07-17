@@ -68,10 +68,6 @@ class Vote(commands.Cog):
                     self.votes[player_name] = 1
                 self.save_votes()
 
-    @nextcord.slash_command(name="topvoter", description="Zeigt die Top 3 Voter des Monats in einem Embed an.")
-    async def slash_top_voter(self, ctx: commands.Context):
-        await self.announce_top_voters()
-
     async def schedule_announcement(self):
         while True:
             now = datetime.now()
