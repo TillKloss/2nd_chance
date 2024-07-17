@@ -5,10 +5,10 @@ import os
 intents = nextcord.Intents.all()
 client = commands.Bot(command_prefix="adm", intents=intents)
 
-guild_id = 1147909103260274700
-role_id = 1262926834811666462
-target_channel_id = 1263124483477078036
-channel_id = 1262946543183597721
+guild_id = 1195696554875555861
+role_id = 1195709974916116530
+target_channel_id = 1262939927650500719
+channel_id = 1249433154167508992
 
 @client.event
 async def on_ready():
@@ -29,12 +29,3 @@ if __name__ == "__main__":
                 print(f"Failed to load {filename}: {e}")
 
 client.run("MTI2Mjg3NTA2NzA1MDc1NDE4MQ.GC0vCa.1bVfxNSlf3tpEGJN4XVA2PfRyEkETIKN_S4jqQ")
-
-"""
-medaillons vor spielern in Announcment -------
-@bewohner benachrichtigung -------
-letzte 3 monate in channel anzeigen
-#verwandelten channel farbe embed -------
-profile pic -------------------
-'kein spieler' wird nicht mit reingenommen -------------
-"""

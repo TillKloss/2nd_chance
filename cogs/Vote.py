@@ -6,10 +6,10 @@ import nextcord
 from nextcord.ext import commands
 
 
-guild_id = 1147909103260274700
-role_id = 1262926834811666462
-target_channel_id = 1263124483477078036
-channel_id = 1262946543183597721
+guild_id = 1195696554875555861
+role_id = 1195709974916116530
+target_channel_id = 1262939927650500719
+channel_id = 1249433154167508992
 embed_color = 0xffbb5c
 
 
