@@ -28,4 +28,4 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"Failed to load {filename}: {e}")
 
-client.run("MTI2Mjg3NTA2NzA1MDc1NDE4MQ.GC0vCa.1bVfxNSlf3tpEGJN4XVA2PfRyEkETIKN_S4jqQ")
+client.run("HIER TOKEN ANGEBEN")
