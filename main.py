@@ -28,4 +28,9 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"Failed to load {filename}: {e}")
 
-client.run("HIER TOKEN ANGEBEN")
+def load_token():
+    with open("token.txt") as f:
+        token = f.read().strip()
+    return token
+
+client.run(load_token())
