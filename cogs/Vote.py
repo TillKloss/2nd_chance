@@ -5,11 +5,22 @@ from datetime import datetime, timedelta
 import nextcord
 from nextcord.ext import commands
 
-
+"""
+#----------TEST SERVER
 guild_id = 1195696554875555861
+role_id = 1262926834811666462
+target_channel_id = 1263124483477078036
+channel_id = 1263144207502016655
+top_voter_channel_id = 1265779488294174905
+embed_color = 0xffbb5c
+"""
+#----------PRODUCTION SERVER
+
+guild_id = 1147909103260274700
 role_id = 1195709974916116530
 target_channel_id = 1262939927650500719
 channel_id = 1249433154167508992
+top_voter_channel_id = 1265783824508387497
 embed_color = 0xffbb5c
 
 
@@ -19,6 +30,7 @@ class Vote(commands.Cog):
         self.client = client
         self.target_channel_id = target_channel_id
         self.channel_id = channel_id
+        self.top_voter_channel_id = top_voter_channel_id
         self.role_id = role_id
         self.votes_file = "votes.json"
         self.load_data()
@@ -56,8 +68,6 @@ class Vote(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author.bot:
-            return
         if message.channel.id == channel_id:
             if "hat gerade für den Server" in message.content:
                 player_name = message.content.split(" hat gerade für den Server")[0]
@@ -67,10 +77,33 @@ class Vote(commands.Cog):
                 elif player_name != "Ein Spieler":
                     self.votes[player_name] = 1
                 self.save_votes()
+                await self.update_top_voters()
 
-    @nextcord.slash_command(name="topvoter", description="Zeigt die Top 3 Voter des Monats in einem Embed an.")
-    async def slash_top_voter(self, ctx: commands.Context):
-        await self.announce_top_voters()
+
+    async def update_top_voters(self):
+        top_voters = sorted(self.votes.items(), key=lambda x: (-x[1], x[0]))[:10]
+        channel = self.client.get_channel(self.top_voter_channel_id)
+        await self.cleanup_channel(channel)
+
+        if top_voters:
+            embed = nextcord.Embed(
+                title="Top 10 Voter",
+                color=embed_color
+            )
+            for idx, (name, votes) in enumerate(top_voters, start=1):
+                embed.add_field(
+                    name=f"{idx}. {name}",
+                    value=f"Stimmen: {votes}",
+                    inline=False
+                )
+            embed.set_footer(text=f"Stand: {datetime.now().strftime('%d.%m.%Y %H:%M')} Uhr")
+            await channel.send(embed=embed)
+
+
+    async def cleanup_channel(self, channel):
+        messages = [msg async for msg in channel.history(limit=100)]
+        for message in messages:
+            await message.delete()
 
     async def schedule_announcement(self):
         while True:
