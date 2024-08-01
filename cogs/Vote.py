@@ -4,8 +4,10 @@ import asyncio
 from datetime import datetime, timedelta
 import nextcord
 from nextcord.ext import commands
+import pytz
 
-"""
+german_tz = pytz.timezone('Europe/Berlin')
+
 #---------TEST
 guild_id = 1195696554875555861
 role_id = 1262926834811666462
@@ -13,8 +15,8 @@ target_channel_id = 1263124483477078036
 channel_id = 1263144207502016655
 top_channel_id = 1265779488294174905
 embed_color = 0xffbb5c
-"""
 
+"""
 #---------PRODUCTION
 guild_id = 1147909103260274700
 role_id = 1195709974916116530
@@ -22,7 +24,7 @@ target_channel_id = 1262939927650500719
 channel_id = 1249433154167508992
 top_channel_id = 1265783824508387497
 embed_color = 0xffbb5c
-
+"""
 
 class Vote(commands.Cog):
 
@@ -40,8 +42,7 @@ class Vote(commands.Cog):
             try:
                 with open(self.votes_file, "r") as f:
                     data = json.load(f)
-                    self.last_announcement = datetime.fromisoformat(data.get("last_announcement")) if data.get(
-                        "last_announcement") else None
+                    self.last_announcement = datetime.fromisoformat(data.get("last_announcement")).astimezone(german_tz) if data.get("last_announcement") else None
                     self.last_announcement_message = data.get("last_announcement_message")
                     self.message_ids = data.get("message_ids", [])
                     self.votes = data.get("votes", {})
@@ -81,7 +82,7 @@ class Vote(commands.Cog):
 
     async def update_top_10_voters(self):
         top_voters = sorted(self.votes.items(), key=lambda x: (-x[1], x[0]))[:10]
-        channel = self.client.get_channel(self.target_channel_id)
+        channel = self.client.get_channel(self.top_channel_id)
 
         await self.cleanup_channel(channel)
 
@@ -96,7 +97,7 @@ class Vote(commands.Cog):
                     value=f"Stimmen: {votes}",
                     inline=False
                 )
-            embed.set_footer(text=f"Stand: {datetime.now().strftime('%d.%m.%Y %H:%M')} Uhr")
+            embed.set_footer(text=f"Stand: {datetime.now(german_tz).strftime('%d.%m.%Y %H:%M')} Uhr")
 
             await channel.send(embed=embed)
 
@@ -112,7 +113,7 @@ class Vote(commands.Cog):
 
     async def schedule_announcement(self):
         while True:
-            now = datetime.now()
+            now = datetime.now(german_tz)
             if now.month != (now - timedelta(days=now.day)).month:
                 if not self.last_announcement or self.last_announcement.month != now.month:
                     self.last_announcement = now
@@ -153,7 +154,7 @@ class Vote(commands.Cog):
             return
 
         if top_voters:
-            now = datetime.now()
+            now = datetime.now(german_tz)
             embed = nextcord.Embed(
                 title=f"{now.strftime('%B')} | Top-Voter",
                 description="Herzlichen Glückwunsch und vielen Dank für Eure Unterstützung!",
@@ -206,8 +207,7 @@ class Vote(commands.Cog):
             try:
                 with open(self.votes_file, "r") as f:
                     data = json.load(f)
-                    self.last_announcement = datetime.fromisoformat(data.get("last_announcement")) if data.get(
-                        "last_announcement") else None
+                    self.last_announcement = datetime.fromisoformat(data.get("last_announcement")).astimezone(german_tz) if data.get("last_announcement") else None
                     self.last_announcement_message = data.get("last_announcement_message")
                     self.message_ids = data.get("message_ids", [])
                     self.votes = data.get("votes", {})
