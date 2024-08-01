@@ -114,10 +114,8 @@ class Vote(commands.Cog):
     async def schedule_announcement(self):
         while True:
             now = datetime.now(german_tz)
-            if now.month != (now - timedelta(days=now.day)).month:
-                if not self.last_announcement or self.last_announcement.month != now.month:
-                    self.last_announcement = now
-                    await self.announce_top_voters()
+            if now.day == 1 and (not self.last_announcement or self.last_announcement.month != now.month):
+                await self.announce_top_voters()
             await asyncio.sleep(1800)
 
     async def send_announcement(self, channel, embed, message_content):
@@ -127,6 +125,7 @@ class Vote(commands.Cog):
         message = await channel.send(content=message_content, embed=embed)
         self.last_announcement_message = message.id
         self.message_ids.append(message.id)
+        self.last_announcement = datetime.now(german_tz)
         self.save_data()
 
     async def should_cleanup(self, channel):
@@ -149,12 +148,14 @@ class Vote(commands.Cog):
     async def announce_top_voters(self):
         top_voters = sorted(self.votes.items(), key=lambda x: (-x[1], x[0]))[:3]
         channel = self.client.get_channel(self.target_channel_id)
-
+        now = datetime.now(german_tz)
         if channel is None:
             return
 
+        if self.last_announcement and self.last_announcement.month == now.month:
+            return
+
         if top_voters:
-            now = datetime.now(german_tz)
             embed = nextcord.Embed(
                 title=f"{now.strftime('%B')} | Top-Voter",
                 description="Herzlichen Glückwunsch und vielen Dank für Eure Unterstützung!",
@@ -193,6 +194,9 @@ class Vote(commands.Cog):
             embed = nextcord.Embed(title="Diesen Monat wurden keine Stimmen vergeben.",
                                    color=embed_color)
             await self.send_announcement(channel, embed, message_content)
+
+        self.last_announcement = now
+        self.save_data()
 
         self.reset_votes()
         self.save_votes()
