@@ -5,7 +5,7 @@ import pytz
 
 german_tz = pytz.timezone('Europe/Berlin')
 
-
+"""
 #---------TEST
 guild_id = 11956965548755558611
 embed_color = 0xffbb5c
@@ -35,10 +35,11 @@ voice_channels_test = {"Funk01 ":1272315108500050020,
                        "Funk22":1272315290750816266,
                        "Funk23":1272315290750816266,
                        "Funk24":1272315290750816266,
-                       "Funk25":1272315290750816266}
-
-
+                       "Funk25":1272315290750816266
+                       }
 """
+
+
 #---------PRODUCTION
 guild_id = 1147909103260274700
 embed_color = 0xffbb5c
@@ -68,8 +69,8 @@ voice_channels_test = {"Funk01 ":1198939632176480406,
                        "Funk22":1198943384761552897,
                        "Funk23":1198943277978759168,
                        "Funk24":1198943903651471410,
-                       "Funk25":1198944052192755723}
-"""
+                       "Funk25":1198944052192755723
+                       }
 
 
 async def cleanup_channel(channel):
